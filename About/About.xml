@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<ModMetaData>
+    
+    <name>Persistent Start Date</name>
+    <packageId>Turnovus.RimWorld.PersistentDate</packageId>
+    <author>Turnovus</author>
+    <modVersion IgnoreIfNoMatchingField="True">NONE</modVersion>
+    <!-- <modIconPath IgnoreIfNoMatchingField="True"></modIconPath> -->
+    <description>TODO.</description>
+    <supportedVersions>
+        <li>1.6</li>
+    </supportedVersions>
+    <loadAfter>
+        <li>Ludeon.RimWorld</li>
+    </loadAfter>
+
+    <modDependencies>
+        <li>
+            <packageId>brrainz.harmony</packageId>
+            <displayName>Harmony</displayName>
+            <steamWorkshopUrl>steam://url/CommunityFilePage/2009463077</steamWorkshopUrl>
+            <downloadUrl>https://github.com/pardeike/HarmonyRimWorld/releases/latest</downloadUrl>
+        </li>
+    </modDependencies>
+
+</ModMetaData>
