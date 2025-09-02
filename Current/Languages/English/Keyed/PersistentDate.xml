@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8" ?>
+
+<LanguageData>
+
+    <PersistentDate.SettingsCategory>Persistent Date</PersistentDate.SettingsCategory>
+
+    <PersistentDate.Settings.CurrentDateLabel>Current Date:</PersistentDate.Settings.CurrentDateLabel>
+
+    <PersistentDate.Settings.QuadrumShort.Aprimay>Apr</PersistentDate.Settings.QuadrumShort.Aprimay>
+    <PersistentDate.Settings.QuadrumShort.Jugust>Jug</PersistentDate.Settings.QuadrumShort.Jugust>
+    <PersistentDate.Settings.QuadrumShort.Septober>Sep</PersistentDate.Settings.QuadrumShort.Septober>
+    <PersistentDate.Settings.QuadrumShort.Decembary>Dec</PersistentDate.Settings.QuadrumShort.Decembary>
+    <PersistentDate.Settings.QuadrumShort.Unknown>???</PersistentDate.Settings.QuadrumShort.Unknown>
+
+</LanguageData>

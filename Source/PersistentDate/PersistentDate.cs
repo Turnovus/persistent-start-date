@@ -20,7 +20,7 @@ namespace PersistentDate
         {
         }
 
-        public override string SettingsCategory() => "Persistent Date";
+        public override string SettingsCategory() => "PersistentDate.SettingsCategory".Translate();
 
         public override void DoSettingsWindowContents(Rect inRect)
         {
@@ -29,7 +29,7 @@ namespace PersistentDate
             // Header for date selector
             TextAnchor anchor = Text.Anchor;
             Text.Anchor = TextAnchor.MiddleCenter;
-            Widgets.Label(rowRect, "!!TODO!! Current Date:");
+            Widgets.Label(rowRect, "PersistentDate.Settings.CurrentDateLabel".Translate());
             Text.Anchor = anchor;
             
             rowRect.y += RowHeight;
@@ -102,15 +102,15 @@ namespace PersistentDate
             switch (quadrum)
             {
                 case Quadrum.Aprimay:
-                    return "Apr";
+                    return "PersistentDate.Settings.QuadrumShort.Aprimay".Translate();
                 case Quadrum.Jugust:
-                    return "Jug";
+                    return "PersistentDate.Settings.QuadrumShort.Jugust".Translate();
                 case Quadrum.Septober:
-                    return "Sep";
+                    return "PersistentDate.Settings.QuadrumShort.Septober".Translate();
                 case Quadrum.Decembary:
-                    return "Dec";
+                    return "PersistentDate.Settings.QuadrumShort.Decembary".Translate();
             }
-            return "???";
+            return "PersistentDate.Settings.QuadrumShort.Unknown".Translate();
         }
     }
 
