@@ -137,4 +137,24 @@ namespace PersistentDate
             Scribe_Values.Look(ref day, "day");
         }
     }
+
+    public class PersistentDate_GameComponent : GameComponent
+    {
+        public int startYearOffset = GenDate.DefaultStartingYear;
+        
+        public PersistentDate_GameComponent(Game game)
+        {
+        }
+
+        public override void StartedNewGame()
+        {
+            startYearOffset = LoadedModManager.GetMod<PersistentDate_Mod>().Settings.Year + 1;
+            Find.TickManager.gameStartAbsTick += startYearOffset * GenDate.TicksPerYear;
+        }
+
+        public override void ExposeData()
+        {
+            Scribe_Values.Look(ref startYearOffset, "startYearOffset");
+        }
+    }
 }
