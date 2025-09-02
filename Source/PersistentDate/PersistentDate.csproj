@@ -9,7 +9,7 @@
     </PropertyGroup>
 
     <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
-      <OutputPath>../Current/Assemblies</OutputPath>
+      <OutputPath>../../Current/Assemblies/</OutputPath>
       <DebugType>none</DebugType>
     </PropertyGroup>
 
@@ -25,6 +25,9 @@
       <Reference Include="UnityEngine.CoreModule">
         <HintPath>..\..\..\..\RimWorldWin64_Data\Managed\UnityEngine.CoreModule.dll</HintPath>
         <Private>False</Private>
+      </Reference>
+      <Reference Include="UnityEngine.IMGUIModule">
+        <HintPath>..\..\..\..\RimWorldWin64_Data\Managed\UnityEngine.IMGUIModule.dll</HintPath>
       </Reference>
       <Reference Include="UnityEngine.TextRenderingModule">
         <HintPath>..\..\..\..\RimWorldWin64_Data\Managed\UnityEngine.TextRenderingModule.dll</HintPath>
