@@ -149,7 +149,6 @@ namespace PersistentDate
         public override void StartedNewGame()
         {
             startYearOffset = LoadedModManager.GetMod<PersistentDate_Mod>().Settings.Year + 1;
-            Find.TickManager.gameStartAbsTick += startYearOffset * GenDate.TicksPerYear;
         }
 
         public override void ExposeData()
