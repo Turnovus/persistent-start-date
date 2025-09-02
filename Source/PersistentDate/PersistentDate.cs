@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using RimWorld;
+using RimWorld.Planet;
 using UnityEngine;
 using Verse;
 
@@ -141,6 +142,8 @@ namespace PersistentDate
     public class PersistentDate_GameComponent : GameComponent
     {
         public int startYearOffset = GenDate.DefaultStartingYear;
+
+        private PersistentDate_ModSettings Settings => LoadedModManager.GetMod<PersistentDate_Mod>().Settings;
         
         public PersistentDate_GameComponent(Game game)
         {
@@ -148,7 +151,17 @@ namespace PersistentDate
 
         public override void StartedNewGame()
         {
-            startYearOffset = LoadedModManager.GetMod<PersistentDate_Mod>().Settings.Year + 1;
+            startYearOffset = Settings.Year;
+
+            PlanetTile startTile = Find.GameInitData.startingTile;
+            Vector2 startCoordinates = Find.WorldGrid.LongLatOf(startTile);
+            Quadrum startQuadrum = GenDate.Quadrum(Find.TickManager.TicksAbs, startCoordinates.x);
+            int startDay = GenDate.DayOfTwelfth(Find.TickManager.TicksAbs, startCoordinates.x);
+
+            if (startQuadrum > Settings.quadrum || (startQuadrum == Settings.quadrum && startDay <= Settings.day))
+                return;
+
+            startYearOffset += 1;
         }
 
         public override void ExposeData()
