@@ -203,6 +203,7 @@ namespace PersistentDate
         public Quadrum quadrum = Quadrum.Aprimay;
         public int day = 1;
         public TimekeepingMode mode = TimekeepingMode.UseLatest;
+        private string cumulativeTimeStamp = "";
 
         public int Year
         {
@@ -217,6 +218,33 @@ namespace PersistentDate
             day = 1;
         }
 
+        public void TryIncrementCumulativeDate(string timestamp)
+        {
+            if (timestamp == cumulativeTimeStamp)
+                return;
+
+            cumulativeTimeStamp = timestamp;
+            
+            day += 1;
+            if (day > GenDate.DaysPerQuadrum)
+            {
+                day = 1;
+                quadrum = GetNextQuadrum(quadrum);
+                if (quadrum == QuadrumUtility.FirstQuadrum)
+                    year += 1;
+            }
+            
+            Write();
+        }
+
+        private Quadrum GetNextQuadrum(Quadrum current)
+        {
+            int index = QuadrumUtility.QuadrumsInChronologicalOrder.IndexOf(current) + 1;
+            if (index >= QuadrumUtility.QuadrumsInChronologicalOrder.Count)
+                index = 0;
+            return QuadrumUtility.QuadrumsInChronologicalOrder[index];
+        }
+
         public override void ExposeData()
         {
             base.ExposeData();
@@ -224,17 +252,27 @@ namespace PersistentDate
             Scribe_Values.Look(ref quadrum, "quadrum");
             Scribe_Values.Look(ref day, "day");
             Scribe_Values.Look(ref mode, "mode");
+            Scribe_Values.Look(ref cumulativeTimeStamp, "cumulativeTimeStamp");
         }
     }
 
     public class PersistentDate_GameComponent : GameComponent
     {
         public int startYearOffset = GenDate.DefaultStartingYear;
+        private int dayCounter = 0;
 
         private PersistentDate_ModSettings Settings => LoadedModManager.GetMod<PersistentDate_Mod>().Settings;
         
         public PersistentDate_GameComponent(Game game)
         {
+        }
+
+        private string GetTimestamp()
+        {
+            string stamp = Find.World.info.name;
+            stamp += " " + Find.World.ConstantRandSeed;
+            stamp += " " + Find.TickManager.TicksAbs.ToString();
+            return stamp;
         }
 
         public override void StartedNewGame()
@@ -252,9 +290,95 @@ namespace PersistentDate
             startYearOffset += 1;
         }
 
+        public override void GameComponentTick()
+        {
+            dayCounter++;
+            if (dayCounter >= GenDate.TicksPerDay)
+            {
+                dayCounter = 0;
+                if (Settings.mode == TimekeepingMode.Cumulative)
+                {
+                    Settings.TryIncrementCumulativeDate(GetTimestamp());
+                    return;
+                }
+            }
+
+            if (dayCounter % 6000 != 0 || Settings.mode == TimekeepingMode.Disabled)
+                return;
+
+            Date currentDate = GetLatestDate();
+            Date savedDate = new Date()
+            {
+                day = Settings.day,
+                quadrum = Settings.quadrum,
+                year = Settings.Year,
+            };
+
+            if (Settings.mode == TimekeepingMode.UseCurrent || currentDate.LaterThan(savedDate))
+            {
+                Settings.day = currentDate.day;
+                Settings.quadrum = currentDate.quadrum;
+                Settings.Year = currentDate.year - GenDate.DefaultStartingYear;
+                Settings.Write();
+            }
+        }
+
+        private Date GetLatestDate()
+        {
+            Date latest = null;
+            
+            foreach (Map map in Find.Maps)
+            {
+                if (!map.IsPlayerHome)
+                    continue;
+                Date newDate = DateOfMap(map);
+                if (latest == null || newDate.LaterThan(latest))
+                    latest = newDate;
+            }
+
+            return latest ?? DateAt(new Vector2(0, 0));
+        }
+
+        private Date DateOfMap(Map map)
+        {
+            if (map.Tile == PlanetTile.Invalid)
+                return null;
+            
+            Vector2 coordinates = Find.WorldGrid.LongLatOf(map.Tile);
+            return DateAt(coordinates);
+        }
+
+        private Date DateAt(Vector2 coordinates)
+        {
+            int ticks = Find.TickManager.TicksAbs;
+            return new Date()
+            {
+                day = GenDate.DayOfYear(ticks, coordinates.x) % GenDate.DaysPerQuadrum + 1,
+                quadrum = GenDate.Quadrum(ticks, coordinates.x),
+                year = GenDate.Year(ticks, coordinates.x),
+            };
+        }
+
         public override void ExposeData()
         {
             Scribe_Values.Look(ref startYearOffset, "startYearOffset");
+            Scribe_Values.Look(ref dayCounter, "dayCounter");
+        }
+
+        private class Date
+        {
+            public int day;
+            public Quadrum quadrum;
+            public int year;
+
+            public bool LaterThan(Date date)
+            {
+                if (year != date.year)
+                    return year > date.year;
+                if (quadrum != date.quadrum)
+                    return quadrum > date.quadrum;
+                return day > date.day;
+            }
         }
     }
 
