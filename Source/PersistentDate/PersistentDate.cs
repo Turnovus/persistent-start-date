@@ -13,6 +13,7 @@ namespace PersistentDate
         public const float RowHeight = 35f;
         public const float DateSelectorWidthRatio = 0.46f;
         public const float ButtonWidth = 45f;
+        public const float ResetButtonWidth = 120f;
         public const float YearInputGap = 5f;
         
         public PersistentDate_ModSettings Settings => GetSettings<PersistentDate_ModSettings>();
@@ -117,6 +118,9 @@ namespace PersistentDate
 
     public class PersistentDate_ModSettings : ModSettings
     {
+        private const int MinYear = -3500;
+        private const int MaxYear = 500_000_000;
+        
         private int year = 0;
         public Quadrum quadrum = Quadrum.Aprimay;
         public int day = 1;
@@ -124,10 +128,7 @@ namespace PersistentDate
         public int Year
         {
             get => year;
-            set
-            {
-                year = Math.Max(value, 0);
-            }
+            set => year = Math.Min( Math.Max(value, MinYear),  MaxYear );
         }
 
         public override void ExposeData()
