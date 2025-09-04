@@ -16,6 +16,14 @@ namespace PersistentDate
         public const float YearInputGap = 5f;
         public const float ResetButtonWidth = 120f;
         public const float ResetButtonGap = 10f;
+
+        private static readonly List<TimekeepingMode> AllModes = new List<TimekeepingMode>()
+        {
+            TimekeepingMode.UseLatest,
+            TimekeepingMode.UseCurrent,
+            TimekeepingMode.Cumulative,
+            TimekeepingMode.Disabled,
+        };
         
         public PersistentDate_ModSettings Settings => GetSettings<PersistentDate_ModSettings>();
         
@@ -33,7 +41,6 @@ namespace PersistentDate
             TextAnchor anchor = Text.Anchor;
             Text.Anchor = TextAnchor.MiddleCenter;
             Widgets.Label(rowRect, "PersistentDate.Settings.CurrentDateLabel".Translate());
-            Text.Anchor = anchor;
             
             // Start date selector
             rowRect.y += RowHeight;
@@ -67,10 +74,47 @@ namespace PersistentDate
             dateResetRect.width = ResetButtonWidth;
             bool resetDate = Widgets.ButtonText(dateResetRect, "PersistentDate.Settings.Reset".Translate());
             
+            // Mode Selector
+            rowRect.y += RowHeight * 2f;
+            Rect modeSelectRect = rowRect.ContractedBy(rowRect.width * 0.5f * (1f - DateSelectorWidthRatio), 0f);
+            TooltipHandler.TipRegion(modeSelectRect, GetCurrentModeTooltip());
+            
+            Rect modeSelectHalfRect = new Rect(modeSelectRect);
+            modeSelectHalfRect.width *= 0.5f;
+            Text.Anchor = TextAnchor.MiddleLeft;
+            Widgets.Label(modeSelectHalfRect, "PersistentDate.Settings.TimekeepingMode".Translate());
+
+            modeSelectHalfRect.x += modeSelectHalfRect.width;
+            bool changeMode = Widgets.ButtonText(modeSelectHalfRect, GetCurrentModeLabel());
+            
+            // Process Input
             HandleDayButton(changeDay);
             HandleQuadrumButton(changeQuadrum);
             HandleYearInput(year);
-            HandleDateReset(resetDate);
+            HandleDateResetButton(resetDate);
+            HandleModeButton(changeMode);
+            
+            // Cleanup
+            Text.Anchor = anchor;
+        }
+
+        private string GetCurrentModeTooltip()
+        {
+            string tip = "PersistentDate.Settings.TimekeepingMode.Desc".Translate();
+
+            tip += "\n\n";
+            string modeKey = "PersistentDate.Settings.TimekeepingMode." + Settings.mode.ToString() + ".Desc";
+            tip += modeKey.Translate();
+            
+            return tip;
+        }
+
+        private string GetCurrentModeLabel() => GetModeLabel(Settings.mode);
+
+        private string GetModeLabel(TimekeepingMode mode)
+        {
+            string key = "PersistentDate.Settings.TimekeepingMode." + mode.ToString();
+            return key.Translate();
         }
 
         private void HandleDayButton(bool pressed)
@@ -81,7 +125,7 @@ namespace PersistentDate
             List<FloatMenuOption> dayOptions = new List<FloatMenuOption>();
             for (int i = 1; i <= GenDate.DaysPerQuadrum; i++)
             {
-                var day = i;
+                int day = i;
                 dayOptions.Add(new FloatMenuOption(
                     i.ToString(),
                     delegate { Settings.day = day; }
@@ -110,10 +154,27 @@ namespace PersistentDate
 
         private void HandleYearInput(int year) => Settings.Year = year;
 
-        private void HandleDateReset(bool reset)
+        private void HandleDateResetButton(bool reset)
         {
             if (reset)
                 Settings.ResetDate();
+        }
+
+        private void HandleModeButton(bool pressed)
+        {
+            if (!pressed)
+                return;
+
+            List<FloatMenuOption> modeOptions = new List<FloatMenuOption>();
+            foreach (TimekeepingMode mode in AllModes)
+            {
+                modeOptions.Add(new FloatMenuOption(
+                    GetModeLabel(mode),
+                    delegate { Settings.mode = mode; }
+                    ));
+            }
+            
+            Find.WindowStack.Add(new FloatMenu(modeOptions));
         }
 
         private static string QuadrumString(Quadrum quadrum)
@@ -141,6 +202,7 @@ namespace PersistentDate
         private int year = 0;
         public Quadrum quadrum = Quadrum.Aprimay;
         public int day = 1;
+        public TimekeepingMode mode = TimekeepingMode.UseLatest;
 
         public int Year
         {
@@ -161,6 +223,7 @@ namespace PersistentDate
             Scribe_Values.Look(ref year, "year");
             Scribe_Values.Look(ref quadrum, "quadrum");
             Scribe_Values.Look(ref day, "day");
+            Scribe_Values.Look(ref mode, "mode");
         }
     }
 
@@ -193,5 +256,13 @@ namespace PersistentDate
         {
             Scribe_Values.Look(ref startYearOffset, "startYearOffset");
         }
+    }
+
+    public enum TimekeepingMode
+    {
+        Disabled,
+        UseLatest,
+        UseCurrent,
+        Cumulative,
     }
 }
