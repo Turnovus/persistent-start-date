@@ -13,8 +13,9 @@ namespace PersistentDate
         public const float RowHeight = 35f;
         public const float DateSelectorWidthRatio = 0.46f;
         public const float ButtonWidth = 45f;
-        public const float ResetButtonWidth = 120f;
         public const float YearInputGap = 5f;
+        public const float ResetButtonWidth = 120f;
+        public const float ResetButtonGap = 10f;
         
         public PersistentDate_ModSettings Settings => GetSettings<PersistentDate_ModSettings>();
         
@@ -34,32 +35,42 @@ namespace PersistentDate
             Widgets.Label(rowRect, "PersistentDate.Settings.CurrentDateLabel".Translate());
             Text.Anchor = anchor;
             
+            // Start date selector
             rowRect.y += RowHeight;
             Rect selectorRect = rowRect.ContractedBy(rowRect.width * 0.5f * (1f - DateSelectorWidthRatio), 0f);
-            Widgets.DrawHighlight(selectorRect);
-
+            selectorRect.x -= 0.5f * (ResetButtonWidth + ResetButtonGap);
+            
             Rect buttonRect = new Rect(selectorRect);
             buttonRect.width = ButtonWidth;
-
+            
+            // Day selector
             bool changeDay = Widgets.ButtonText(buttonRect, Settings.day.ToString());
             buttonRect.x += ButtonWidth;
-
+            
+            // Season selector
             bool changeQuadrum = Widgets.ButtonText(buttonRect, QuadrumString(Settings.quadrum));
-
+            
+            // Year selector
             Rect yearRect = new Rect(
                 buttonRect.x + ButtonWidth + YearInputGap,
                 buttonRect.y,
                 selectorRect.width - 2f * ButtonWidth - YearInputGap,
                 selectorRect.height);
-            
             int year = Settings.Year + GenDate.DefaultStartingYear;
             string yearBuffer = year.ToString();
             Widgets.IntEntry(yearRect, ref year, ref yearBuffer);
             year -= GenDate.DefaultStartingYear;
             
+            // Reset Button
+            Rect dateResetRect = new Rect(selectorRect);
+            dateResetRect.x += dateResetRect.width + ResetButtonGap;
+            dateResetRect.width = ResetButtonWidth;
+            bool resetDate = Widgets.ButtonText(dateResetRect, "PersistentDate.Settings.Reset".Translate());
+            
             HandleDayButton(changeDay);
             HandleQuadrumButton(changeQuadrum);
             HandleYearInput(year);
+            HandleDateReset(resetDate);
         }
 
         private void HandleDayButton(bool pressed)
@@ -99,6 +110,12 @@ namespace PersistentDate
 
         private void HandleYearInput(int year) => Settings.Year = year;
 
+        private void HandleDateReset(bool reset)
+        {
+            if (reset)
+                Settings.ResetDate();
+        }
+
         private static string QuadrumString(Quadrum quadrum)
         {
             switch (quadrum)
@@ -129,6 +146,13 @@ namespace PersistentDate
         {
             get => year;
             set => year = Math.Min( Math.Max(value, MinYear),  MaxYear );
+        }
+
+        public void ResetDate()
+        {
+            year = 0;
+            quadrum = Quadrum.Aprimay;
+            day = 1;
         }
 
         public override void ExposeData()
