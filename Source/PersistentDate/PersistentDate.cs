@@ -258,7 +258,7 @@ namespace PersistentDate
 
     public class PersistentDate_GameComponent : GameComponent
     {
-        public int startYearOffset = GenDate.DefaultStartingYear;
+        public int startYearOffset = 0;
         private int dayCounter = 0;
 
         private PersistentDate_ModSettings Settings => LoadedModManager.GetMod<PersistentDate_Mod>().Settings;
