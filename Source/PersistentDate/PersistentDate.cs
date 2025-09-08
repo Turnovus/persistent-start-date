@@ -87,12 +87,22 @@ namespace PersistentDate
             modeSelectHalfRect.x += modeSelectHalfRect.width;
             bool changeMode = Widgets.ButtonText(modeSelectHalfRect, GetCurrentModeLabel());
             
+            // Cumulative mode increment button
+            bool doIncrement = false;
+            if (Settings.mode == TimekeepingMode.Cumulative)
+            {
+                rowRect.y += RowHeight * 2f;
+                Rect incrementRect = rowRect.ContractedBy(0.3f * rowRect.width, 0f);
+                doIncrement = Widgets.ButtonText(incrementRect, "PersistentDate.Settings.Increment".Translate());
+            }
+            
             // Process Input
             HandleDayButton(changeDay);
             HandleQuadrumButton(changeQuadrum);
             HandleYearInput(year);
             HandleDateResetButton(resetDate);
             HandleModeButton(changeMode);
+            HandleIncrementButton(doIncrement);
             
             // Cleanup
             Text.Anchor = anchor;
@@ -177,6 +187,12 @@ namespace PersistentDate
             Find.WindowStack.Add(new FloatMenu(modeOptions));
         }
 
+        private void HandleIncrementButton(bool pressed)
+        {
+            if (pressed)
+                Settings.TryIncrementCumulativeDate(string.Empty);
+        }
+
         private static string QuadrumString(Quadrum quadrum)
         {
             switch (quadrum)
@@ -220,7 +236,7 @@ namespace PersistentDate
 
         public void TryIncrementCumulativeDate(string timestamp)
         {
-            if (timestamp == cumulativeTimeStamp)
+            if (timestamp == cumulativeTimeStamp && !timestamp.NullOrEmpty())
                 return;
 
             cumulativeTimeStamp = timestamp;

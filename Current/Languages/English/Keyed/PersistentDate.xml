@@ -29,4 +29,6 @@
     <PersistentDate.Settings.TimekeepingMode.Cumulative>Cumulative</PersistentDate.Settings.TimekeepingMode.Cumulative>
     <PersistentDate.Settings.TimekeepingMode.Cumulative.Desc>The in-game date is ignored. Instead, the stored date is incremented whenever a day passes.</PersistentDate.Settings.TimekeepingMode.Cumulative.Desc>
 
+    <PersistentDate.Settings.Increment>Increment +1 Day</PersistentDate.Settings.Increment>
+
 </LanguageData>
