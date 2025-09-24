@@ -21,7 +21,7 @@
     <PersistentDate.Settings.TimekeepingMode.Disabled.Desc>The stored date will never be altered automatically. New games will still begin after the stored date, so you can still use the mod to set a custom start date.</PersistentDate.Settings.TimekeepingMode.Disabled.Desc>
 
     <PersistentDate.Settings.TimekeepingMode.UseLatest>Use Latest</PersistentDate.Settings.TimekeepingMode.UseLatest>
-    <PersistentDate.Settings.TimekeepingMode.UseLatest.Desc>The in-game date will be stored if it is later than the current stored date, and will be ingored otherwise.</PersistentDate.Settings.TimekeepingMode.UseLatest.Desc>
+    <PersistentDate.Settings.TimekeepingMode.UseLatest.Desc>The in-game date will be stored if it is later than the current stored date, and will be ignored otherwise.</PersistentDate.Settings.TimekeepingMode.UseLatest.Desc>
 
     <PersistentDate.Settings.TimekeepingMode.UseCurrent>Use Current</PersistentDate.Settings.TimekeepingMode.UseCurrent>
     <PersistentDate.Settings.TimekeepingMode.UseCurrent.Desc>The in-game date will always be stored, regardless of the current stored date.</PersistentDate.Settings.TimekeepingMode.UseCurrent.Desc>
