@@ -16,6 +16,7 @@ namespace PersistentDate
         public const float YearInputGap = 5f;
         public const float ResetButtonWidth = 120f;
         public const float ResetButtonGap = 10f;
+        public const float MinDayWidthRatio = 0.7f;
 
         private static readonly List<TimekeepingMode> AllModes = new List<TimekeepingMode>()
         {
@@ -96,6 +97,20 @@ namespace PersistentDate
                 doIncrement = Widgets.ButtonText(incrementRect, "PersistentDate.Settings.Increment".Translate());
             }
             
+            // Minimum day input
+            rowRect.y += RowHeight * 2;
+            DoTooltip(rowRect, "PersistentDate.Settings.MinDay.Desc".Translate());
+            
+            Rect minDayRect = rowRect.ContractedBy(rowRect.width * 0.5f * (1f-MinDayWidthRatio), 0f);
+            minDayRect.width /= 2f;
+            Widgets.Label(minDayRect, "PersistentDate.Settings.MinDay".Translate());
+
+            minDayRect.x += minDayRect.width;
+            int inputMinDay = Settings.MinDaysPassed;
+            string minDayBuffer = inputMinDay.ToString();
+            Widgets.IntEntry(minDayRect, ref inputMinDay, ref minDayBuffer);
+            
+            
             // Process Input
             HandleDayButton(changeDay);
             HandleQuadrumButton(changeQuadrum);
@@ -103,6 +118,7 @@ namespace PersistentDate
             HandleDateResetButton(resetDate);
             HandleModeButton(changeMode);
             HandleIncrementButton(doIncrement);
+            HandleMinDayInput(inputMinDay);
             
             // Cleanup
             Text.Anchor = anchor;
@@ -201,6 +217,8 @@ namespace PersistentDate
                 Settings.TryIncrementCumulativeDate(string.Empty);
         }
 
+        private void HandleMinDayInput(int minDay) => Settings.MinDaysPassed = minDay;
+
         private static string QuadrumString(Quadrum quadrum)
         {
             switch (quadrum)
@@ -227,12 +245,19 @@ namespace PersistentDate
         public Quadrum quadrum = Quadrum.Aprimay;
         public int day = 1;
         public TimekeepingMode mode = TimekeepingMode.UseLatest;
+        private int minimumDaysPassed = 0;
         private string cumulativeTimeStamp = "";
 
         public int Year
         {
             get => year;
             set => year = Math.Min( Math.Max(value, MinYear),  MaxYear );
+        }
+
+        public int MinDaysPassed
+        {
+            get => minimumDaysPassed;
+            set => minimumDaysPassed = Math.Max(value, 0);
         }
 
         public void ResetDate()
@@ -276,12 +301,14 @@ namespace PersistentDate
             Scribe_Values.Look(ref quadrum, "quadrum");
             Scribe_Values.Look(ref day, "day");
             Scribe_Values.Look(ref mode, "mode");
+            Scribe_Values.Look(ref minimumDaysPassed, "minimumDaysPassed");
             Scribe_Values.Look(ref cumulativeTimeStamp, "cumulativeTimeStamp");
         }
     }
 
     public class PersistentDate_GameComponent : GameComponent
     {
+        public bool active = false;
         public int startYearOffset = 0;
         private int dayCounter = 0;
 
@@ -316,6 +343,11 @@ namespace PersistentDate
 
         public override void GameComponentTick()
         {
+            if (!active && GenDate.DaysPassed < Settings.MinDaysPassed)
+                return;
+
+            active = true;
+            
             dayCounter++;
             if (dayCounter >= GenDate.TicksPerDay)
             {
@@ -385,6 +417,7 @@ namespace PersistentDate
 
         public override void ExposeData()
         {
+            Scribe_Values.Look(ref active, "active");
             Scribe_Values.Look(ref startYearOffset, "startYearOffset");
             Scribe_Values.Look(ref dayCounter, "dayCounter");
         }

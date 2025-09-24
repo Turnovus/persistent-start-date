@@ -31,4 +31,7 @@
 
     <PersistentDate.Settings.Increment>Increment +1 Day</PersistentDate.Settings.Increment>
 
+    <PersistentDate.Settings.MinDay>Minimum days passed: </PersistentDate.Settings.MinDay>
+    <PersistentDate.Settings.MinDay.Desc>How many days must pass in your current playthrough before the timekeeper starts to update the stored date. Useful for if you abandon a lot of playthroughs or do a lot of dev quicktests, and don't want your stored date to tick up too quickly.\n\nNOTE: If using cumulative timekeeping, then the date will not be incremented until this day has passed. The timekeeper will not make up for lost time, so the first few days of your playthrough will effectively be lost.</PersistentDate.Settings.MinDay.Desc>
+
 </LanguageData>
