@@ -76,9 +76,9 @@ namespace PersistentDate
             
             // Mode Selector
             rowRect.y += RowHeight * 2f;
-            Rect modeSelectRect = rowRect.ContractedBy(rowRect.width * 0.5f * (1f - DateSelectorWidthRatio), 0f);
-            TooltipHandler.TipRegion(modeSelectRect, GetCurrentModeTooltip());
+            DoTooltip(rowRect, GetCurrentModeTooltip());
             
+            Rect modeSelectRect = rowRect.ContractedBy(rowRect.width * 0.5f * (1f - DateSelectorWidthRatio), 0f);
             Rect modeSelectHalfRect = new Rect(modeSelectRect);
             modeSelectHalfRect.width *= 0.5f;
             Text.Anchor = TextAnchor.MiddleLeft;
@@ -106,6 +106,12 @@ namespace PersistentDate
             
             // Cleanup
             Text.Anchor = anchor;
+        }
+
+        private void DoTooltip(Rect rect, string tip)
+        {
+            Widgets.DrawHighlightIfMouseover(rect);
+            TooltipHandler.TipRegion(rect, tip);
         }
 
         private string GetCurrentModeTooltip()
