@@ -113,6 +113,8 @@ namespace PersistentDate
             string tip = "PersistentDate.Settings.TimekeepingMode.Desc".Translate();
 
             tip += "\n\n";
+            tip += GetCurrentModeLabel() + ":\n";
+            
             string modeKey = "PersistentDate.Settings.TimekeepingMode." + Settings.mode.ToString() + ".Desc";
             tip += modeKey.Translate();
             
