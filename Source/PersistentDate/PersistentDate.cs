@@ -16,7 +16,7 @@ namespace PersistentDate
         public const float YearInputGap = 5f;
         public const float ResetButtonWidth = 120f;
         public const float ResetButtonGap = 10f;
-        public const float MinDayWidthRatio = 0.7f;
+        public const float MinDayWidthRatio = 0.65f;
 
         private static readonly List<TimekeepingMode> AllModes = new List<TimekeepingMode>()
         {
@@ -102,10 +102,11 @@ namespace PersistentDate
             DoTooltip(rowRect, "PersistentDate.Settings.MinDay.Desc".Translate());
             
             Rect minDayRect = rowRect.ContractedBy(rowRect.width * 0.5f * (1f-MinDayWidthRatio), 0f);
-            minDayRect.width /= 2f;
+            minDayRect.width /= 3f;
             Widgets.Label(minDayRect, "PersistentDate.Settings.MinDay".Translate());
 
             minDayRect.x += minDayRect.width;
+            minDayRect.width *= 2f;
             int inputMinDay = Settings.MinDaysPassed;
             string minDayBuffer = inputMinDay.ToString();
             Widgets.IntEntry(minDayRect, ref inputMinDay, ref minDayBuffer);
