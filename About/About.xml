@@ -7,7 +7,7 @@
     <author>Turnovus</author>
     <modVersion IgnoreIfNoMatchingField="True">1</modVersion>
     <!-- <modIconPath IgnoreIfNoMatchingField="True"></modIconPath> -->
-    <description>Adjusts the in-game date so that your next playthrough will begin chronologically after your previous playthrough.\n\nCheck the mod settings to adjust how date conflicts are handled.</description>
+    <description>Adjusts the in-game date so that your next playthrough will begin chronologically after your previous playthrough.\n\nCheck the mod settings to adjust the stored date, and to change how the date is automatically tracked.</description>
     <supportedVersions>
         <li>1.6</li>
     </supportedVersions>
