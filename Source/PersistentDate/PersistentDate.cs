@@ -16,7 +16,7 @@ namespace PersistentDate
         public const float YearInputGap = 5f;
         public const float ResetButtonWidth = 120f;
         public const float ResetButtonGap = 10f;
-        public const float MinDayWidthRatio = 0.65f;
+        public const float NumberInputWidthRatio = 0.65f;
 
         private static readonly List<TimekeepingMode> AllModes = new List<TimekeepingMode>()
         {
@@ -98,10 +98,10 @@ namespace PersistentDate
             }
             
             // Minimum day input
-            rowRect.y += RowHeight * 2;
+            rowRect.y += RowHeight * 2f;
             DoTooltip(rowRect, "PersistentDate.Settings.MinDay.Desc".Translate());
             
-            Rect minDayRect = rowRect.ContractedBy(rowRect.width * 0.5f * (1f-MinDayWidthRatio), 0f);
+            Rect minDayRect = rowRect.ContractedBy(rowRect.width * 0.5f * (1f-NumberInputWidthRatio), 0f);
             minDayRect.width /= 3f;
             Widgets.Label(minDayRect, "PersistentDate.Settings.MinDay".Translate());
 
@@ -111,6 +111,19 @@ namespace PersistentDate
             string minDayBuffer = inputMinDay.ToString();
             Widgets.IntEntry(minDayRect, ref inputMinDay, ref minDayBuffer);
             
+            // Start year offset input
+            rowRect.y += RowHeight * 2f;
+            DoTooltip(rowRect, "PersistentDate.Settings.StartYearOffset.Desc".Translate());
+
+            Rect yearOffsetRect = rowRect.ContractedBy(rowRect.width * 0.5f * (1f - NumberInputWidthRatio), 0f);
+            yearOffsetRect.width /= 3f;
+            Widgets.Label(yearOffsetRect, "PersistentDate.Settings.StartYearOffset".Translate());
+
+            yearOffsetRect.x += yearOffsetRect.width;
+            yearOffsetRect.width *= 2f;
+            int inputYearOffset = Settings.StartYearOffset;
+            string yearOffsetBuffer = inputYearOffset.ToString();
+            Widgets.IntEntry(yearOffsetRect, ref inputYearOffset, ref yearOffsetBuffer);
             
             // Process Input
             HandleDayButton(changeDay);
@@ -120,6 +133,7 @@ namespace PersistentDate
             HandleModeButton(changeMode);
             HandleIncrementButton(doIncrement);
             HandleMinDayInput(inputMinDay);
+            HandleStartYearOffsetInput(inputYearOffset);
             
             // Cleanup
             Text.Anchor = anchor;
@@ -220,6 +234,8 @@ namespace PersistentDate
 
         private void HandleMinDayInput(int minDay) => Settings.MinDaysPassed = minDay;
 
+        private void HandleStartYearOffsetInput(int offsetYears) => Settings.StartYearOffset = offsetYears;
+
         private static string QuadrumString(Quadrum quadrum)
         {
             switch (quadrum)
@@ -247,6 +263,7 @@ namespace PersistentDate
         public int day = 1;
         public TimekeepingMode mode = TimekeepingMode.UseLatest;
         private int minimumDaysPassed = 0;
+        private int startYearOffset = 0;
         private string cumulativeTimeStamp = "";
 
         public int Year
@@ -259,6 +276,12 @@ namespace PersistentDate
         {
             get => minimumDaysPassed;
             set => minimumDaysPassed = Math.Max(value, 0);
+        }
+
+        public int StartYearOffset
+        {
+            get => startYearOffset;
+            set => startYearOffset = Math.Max(value, 0);
         }
 
         public void ResetDate()
@@ -303,6 +326,7 @@ namespace PersistentDate
             Scribe_Values.Look(ref day, "day");
             Scribe_Values.Look(ref mode, "mode");
             Scribe_Values.Look(ref minimumDaysPassed, "minimumDaysPassed");
+            Scribe_Values.Look(ref startYearOffset, "startYearOffset");
             Scribe_Values.Look(ref cumulativeTimeStamp, "cumulativeTimeStamp");
         }
     }
