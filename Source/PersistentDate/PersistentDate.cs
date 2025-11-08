@@ -354,12 +354,14 @@ namespace PersistentDate
         public override void StartedNewGame()
         {
             startYearOffset = Settings.Year;
-
+            
+            // Check the exact date of the starting tile
             PlanetTile startTile = Find.GameInitData.startingTile;
             Vector2 startCoordinates = Find.WorldGrid.LongLatOf(startTile);
             Quadrum startQuadrum = GenDate.Quadrum(Find.TickManager.TicksAbs, startCoordinates.x);
             int startDay = GenDate.DayOfTwelfth(Find.TickManager.TicksAbs, startCoordinates.x);
-
+            
+            // If the start date is on a later day of the year than the stored date, skip ahead one more year.
             if (startQuadrum > Settings.quadrum || (startQuadrum == Settings.quadrum && startDay <= Settings.day))
                 return;
 
