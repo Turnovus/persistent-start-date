@@ -239,7 +239,7 @@ namespace PersistentDate
 
     public class PersistentDate_ModSettings : ModSettings
     {
-        private const int MinYear = -3500;
+        private const int MinYear = -GenDate.DefaultStartingYear;
         private const int MaxYear = 500_000_000;
         
         private int year = 0;
