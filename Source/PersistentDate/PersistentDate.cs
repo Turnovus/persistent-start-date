@@ -353,7 +353,7 @@ namespace PersistentDate
 
         public override void StartedNewGame()
         {
-            startYearOffset = Settings.Year;
+            startYearOffset = Settings.Year + Settings.StartYearOffset;
             
             // Check the exact date of the starting tile
             PlanetTile startTile = Find.GameInitData.startingTile;
